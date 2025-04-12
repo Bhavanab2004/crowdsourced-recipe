@@ -24,7 +24,7 @@ mongoose
     "mongodb+srv://bhavana:bhavana@cluster0.bumeszn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => {
-    console.log("Connected to MongoDB");
+    console.log("We have again made the connection to MongoDB");
   })
   .catch((err) => {
     console.log("Error: ", err);
