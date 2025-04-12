@@ -20,7 +20,7 @@ const Navbar = () => {
 
   const [cookies, setCookie] = useCookies(["token"]);
   let navigation = [
-    { name: "RecipeBook", href: "/", current: true },
+    { name: "Crowdsourced Recipe book", href: "/", current: true },
     { name: "Create Recipe", href: "/create-recipe", current: false },
     { name: "Saved Recipe", href: "/saved-recipe", current: false },
     {
