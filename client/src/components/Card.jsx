@@ -17,7 +17,7 @@ function Card({
   const saveRecipe = async (key) => {
     const userID = useGetUserID();
     const response = await axios.put(
-      "https://recipe-book-gha2.onrender.com/recipes/save",
+      "https://crowdsourced-recipe.onrender.com/recipes/save",
       {
         userID,
         recipeID: id,

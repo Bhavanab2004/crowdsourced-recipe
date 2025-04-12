@@ -34,7 +34,7 @@ export default function Login() {
               event.preventDefault();
               try {
                 const response = await axios.post(
-                  "https://recipe-book-gha2.onrender.com/auth/login",
+                  "https://crowdsourced-recipe.onrender.com/auth/login",
                   {
                     username: userName,
                     password,

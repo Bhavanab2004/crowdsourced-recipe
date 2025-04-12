@@ -13,13 +13,13 @@ const Home = () => {
     const fetchRecipes = async () => {
       try {
         const response = await axios.get(
-          "https://recipe-book-gha2.onrender.com/recipes"
+          "https://crowdsourced-recipe.onrender.com/recipes"
         );
         const recipesWithUsernames = await Promise.all(
           response.data.map(async (recipe) => {
             try {
               const userResponse = await axios.post(
-                "https://recipe-book-gha2.onrender.com/auth/getUser",
+                "https://crowdsourced-recipe.onrender.com/auth/getUser",
                 { userID: recipe.userOwner }
               );
               const username = userResponse.data.username;
@@ -33,7 +33,7 @@ const Home = () => {
         const uid = useGetUserID();
         if (uid) {
           const savedRecipesResponse = await axios.get(
-            "https://recipe-book-gha2.onrender.com/recipes/saved/" + uid
+            "https://crowdsourced-recipe.onrender.com/recipes/saved/" + uid
           );
           setSavedRecipes(savedRecipesResponse.data);
         }

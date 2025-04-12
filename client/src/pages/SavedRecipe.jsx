@@ -22,7 +22,7 @@ const SavedRecipe = () => {
     const fetchSavedRecipes = async () => {
       try {
         const response = await axios.get(
-          "https://recipe-book-gha2.onrender.com/recipes/saved/" + userID
+          "https://crowdsourced-recipe.onrender.com/recipes/saved/" + userID
         );
         setSavedRecipes(response.data);
       } catch (error) {
@@ -39,7 +39,7 @@ const SavedRecipe = () => {
         const detailedRecipesPromises = savedRecipes.map(
           async (savedRecipe) => {
             const response = await axios.get(
-              `https://recipe-book-gha2.onrender.com/recipes/${savedRecipe}`
+              `https://crowdsourced-recipe.onrender.com/recipes/${savedRecipe}`
             );
             return response.data;
           }
