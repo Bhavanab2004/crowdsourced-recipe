@@ -21,7 +21,7 @@ export default function SavedRecipe() {
     const fetchSaved = async () => {
       try {
         const { data: ids } = await axios.get(
-          `http://localhost:5000/recipes/saved/${userID}`
+          `https://crowdsourced-recipe.onrender.com/recipes/saved/${userID}`
         );
         setSavedIds(ids);
       } catch (err) {
@@ -40,7 +40,7 @@ export default function SavedRecipe() {
     const fetchDetails = async () => {
       try {
         const promises = savedIds.map((id) =>
-          axios.get(`http://localhost:5000/recipes/${id}`)
+          axios.get(`https://crowdsourced-recipe.onrender.com/recipes/${id}`)
         );
         const results = await Promise.all(promises);
         setRecipes(results.map((res) => res.data));

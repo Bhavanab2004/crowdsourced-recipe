@@ -38,7 +38,7 @@ export default function CreateRecipe() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/recipes/create", {
+      await axios.post("https://crowdsourced-recipe.onrender.com/recipes/create", {
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,

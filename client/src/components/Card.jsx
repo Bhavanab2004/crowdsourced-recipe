@@ -24,7 +24,7 @@ export default function Card({
 
   const saveRecipe = async () => {
     try {
-      await axios.put("http://localhost:5000/recipes/save", { userID, recipeID: id });
+      await axios.put("https://crowdsourced-recipe.onrender.com/recipes/save", { userID, recipeID: id });
       setSaved(true);
     } catch (err) {
       console.error(err);
@@ -33,7 +33,7 @@ export default function Card({
 
   const deleteRecipe = async () => {
     try {
-      await axios.post("http://localhost:5000/recipes/delete", { userID, recipeID: id });
+      await axios.post("https://crowdsourced-recipe.onrender.com/recipes/delete", { userID, recipeID: id });
       window.location.reload();
     } catch (err) {
       console.error(err);

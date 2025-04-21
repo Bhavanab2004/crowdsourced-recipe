@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/login",
+        "https://crowdsourced-recipe.onrender.com/auth/login",
         { username, password }
       );
       if (response.data.message) {

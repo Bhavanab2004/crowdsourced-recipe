@@ -13,12 +13,12 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: all } = await axios.get("http://localhost:5000/recipes");
+        const { data: all } = await axios.get("https://crowdsourced-recipe.onrender.com/recipes");
         const withUser = await Promise.all(
           all.map(async (r) => {
             try {
               const { data: u } = await axios.post(
-                "http://localhost:5000/auth/getUser",
+                "https://crowdsourced-recipe.onrender.com/auth/getUser",
                 { userID: r.userOwner }
               );
               return { ...r, username: u.username };
@@ -30,7 +30,7 @@ export default function Home() {
         setRecipes(withUser.reverse());
         if (userID) {
           const { data: saved } = await axios.get(
-            `http://localhost:5000/recipes/saved/${userID}`
+            `https://crowdsourced-recipe.onrender.com/recipes/saved/${userID}`
           );
           setSavedRecipes(saved);
         }

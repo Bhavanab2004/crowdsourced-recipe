@@ -14,7 +14,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
+      const response = await axios.post("https://crowdsourced-recipe.onrender.com/auth/register", {
         email,
         username,
         password,
