@@ -1,84 +1,88 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import SavedCard from "../components/SavedCard";
-import { useNavigate } from "react-router-dom";
-
 import { useGetUserID } from "../hooks/useGetUserID";
-const SavedRecipe = () => {
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const [detailedRecipes, setDetailedRecipes] = useState([]);
+import { useNavigate } from "react-router-dom";
+import ReactLoading from "react-loading";
+
+export default function SavedRecipe() {
   const userID = useGetUserID();
   const navigate = useNavigate();
+  const [savedIds, setSavedIds] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const userID = useGetUserID();
-    if (userID === null) {
+    if (!userID) {
       navigate("/login");
+      return;
     }
-  }, []);
-
-  useEffect(() => {
-    const fetchSavedRecipes = async () => {
+    const fetchSaved = async () => {
       try {
-        const response = await axios.get(
-          "https://crowdsourced-recipe.onrender.com/recipes/saved/" + userID
+        const { data: ids } = await axios.get(
+          `http://localhost:5000/recipes/saved/${userID}`
         );
-        setSavedRecipes(response.data);
-      } catch (error) {
-        console.error("Error fetching saved recipes:", error);
+        setSavedIds(ids);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch saved recipes.");
       }
     };
-
-    fetchSavedRecipes();
-  }, [userID]);
+    fetchSaved();
+  }, [userID, navigate]);
 
   useEffect(() => {
-    const fetchDetailedRecipes = async () => {
+    if (!savedIds.length) {
+      setLoading(false);
+      return;
+    }
+    const fetchDetails = async () => {
       try {
-        const detailedRecipesPromises = savedRecipes.map(
-          async (savedRecipe) => {
-            const response = await axios.get(
-              `https://crowdsourced-recipe.onrender.com/recipes/${savedRecipe}`
-            );
-            return response.data;
-          }
+        const promises = savedIds.map((id) =>
+          axios.get(`http://localhost:5000/recipes/${id}`)
         );
-
-        const detailedRecipesData = await Promise.all(detailedRecipesPromises);
-        setDetailedRecipes(detailedRecipesData);
-      } catch (error) {
-        console.error("Error fetching detailed recipes:", error);
+        const results = await Promise.all(promises);
+        setRecipes(results.map((res) => res.data));
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load recipe details.");
+      } finally {
+        setLoading(false);
       }
     };
+    fetchDetails();
+  }, [savedIds]);
 
-    fetchDetailedRecipes();
-  }, [savedRecipes]);
   return (
-    <div className="flex-col items-center justify-center py-6 w-full">
-      <div className="">
-        <h1 className="text-2xl font-semibold text-center leading-7 text-gray-900">
+    <div className="min-h-screen bg-[#1e1e2f] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-indigo-400 text-center mb-8">
           Saved Recipes
         </h1>
-      </div>
-      <div className="w-full mt-4 mx-auto flex justify-center items-center px-4 md:px-28 lg:px-40 xl:px-96">
-        <div className="flex flex-col gap-5">
-          {detailedRecipes.map((recipe) => (
-            <SavedCard
-              key={recipe._id}
-              name={recipe.name}
-              imageUrl={recipe.imageUrl}
-              ingredients={recipe.ingredients}
-              instructions={recipe.instructions}
-              cookingTime={recipe.cookingTime}
-              userName={recipe.username}
-              id={recipe._id}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center">
+            <ReactLoading type="spin" color="#6366F1" />
+          </div>
+        ) : error ? (
+          <p className="text-red-500 text-center">{error}</p>
+        ) : recipes.length === 0 ? (
+          <p className="text-gray-400 text-center">No saved recipes found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recipes.map((r) => (
+              <SavedCard
+                key={r._id}
+                name={r.name}
+                imageUrl={r.imageUrl}
+                ingredients={r.ingredients}
+                instructions={r.instructions}
+                cookingTime={r.cookingTime}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default SavedRecipe;
+}

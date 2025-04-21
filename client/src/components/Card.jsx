@@ -1,79 +1,102 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useGetUserID } from "../hooks/useGetUserID";
+import { useNavigate } from "react-router-dom";
 
-function Card({
+export default function Card({
+  id,
   name,
   imageUrl,
   ingredients,
   instructions,
   cookingTime,
   userName,
-  id,
-  savedRecipes,
   bool,
-  loggedInUser,
+  recipeUserId,
 }) {
-  const saveRecipe = async (key) => {
-    const userID = useGetUserID();
-    const response = await axios.put(
-      "https://crowdsourced-recipe.onrender.com/recipes/save",
-      {
-        userID,
-        recipeID: id,
-      }
-    );
-    setIs(true);
+  const userID = useGetUserID();
+  const navigate = useNavigate();
+  const [saved, setSaved] = useState(bool);
+
+  const editRecipe = () => {
+    navigate(`/edit-recipe/${id}`);
   };
-  const [is, setIs] = useState(bool);
+
+  const saveRecipe = async () => {
+    try {
+      await axios.put("http://localhost:5000/recipes/save", { userID, recipeID: id });
+      setSaved(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteRecipe = async () => {
+    try {
+      await axios.post("http://localhost:5000/recipes/delete", { userID, recipeID: id });
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const isOwn = userID === recipeUserId;
 
   return (
-    <div className="w-full border rounded-lg shadow border-gray-900">
-      <a>
+    <div className="max-w-sm bg-[#1e1e2f] border border-gray-700 rounded-2xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+      <div className="relative h-48 w-full">
         <img
-          className="rounded-t-lg w-full object-cover object-bottom h-48 "
+          className="h-full w-full object-cover"
           src={imageUrl}
-          alt=""
+          alt={name}
         />
-      </a>
-      <div className="py-2 px-5">
-        <a href="#">
-          <h5 className="mb-2 text-xl md:text-2xl font-bold tracking-tight text-center text-indigo-600">
-            {name}
-          </h5>
-        </a>
-        <div className="mb-3">
-          <p className="font-normal text-base md:text-lg text-black ">
-            Ingredients:
-          </p>
-          <ul>
-            {ingredients.map((ingredient, index) => (
-              <li key={index} className="text-gray-900 text-base">
-                &nbsp; ➡️{ingredient}
-              </li>
+        <div className="absolute inset-0 bg-black bg-opacity-30" />
+      </div>
+      <div className="p-5 text-gray-200">
+        <h3 className="text-center text-2xl font-semibold text-indigo-400 mb-2">{name}</h3>
+        <p className="text-sm text-gray-400 mb-3">By {userName || 'Unknown'}</p>
+        <div className="mb-4">
+          <h4 className="font-semibold text-gray-300">Ingredients:</h4>
+          <ul className="list-disc list-inside mt-1 text-gray-400 text-sm">
+            {ingredients.map((ing, idx) => (
+              <li key={idx}>➡️ {ing}</li>
             ))}
           </ul>
         </div>
-        <p className="mb-3 font-normal text-gray-700 text-center">
-          {instructions}
-        </p>
-        <p className="mb-3 text-center bg-indigo-600 font-normal w-fit mx-auto px-4 rounded-lg text-white">
-          Cooking Time: {cookingTime} minutes
-        </p>
-        <a className="inline-flex items-center px-3 py-2 text-base md:text-md font-medium text-center text-black">
-          🙋🏻‍♂️ {userName}
-        </a>
-        {loggedInUser === null ? null : (
-          <button
-            onClick={() => saveRecipe(id)}
-            className="mb-3 text-center bg-indigo-600 font-normal w-fit mx-auto px-4 rounded-lg text-white"
-          >
-            {is ? "✨ Saved" : "⭐"}
-          </button>
-        )}
+        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{instructions}</p>
+        <div className="flex items-center justify-center mb-4">
+          <span className="bg-indigo-500 text-white text-xs font-medium px-3 py-1 rounded-full">
+            {cookingTime} mins
+          </span>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {userID && (
+            <button
+              onClick={saveRecipe}
+              className={`px-3 py-1 rounded-xl text-sm font-medium transition 
+                ${saved ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-800 text-indigo-400 hover:bg-indigo-700 hover:text-white'}`}
+            >
+              {saved ? '✨ Saved' : '⭐ Save'}
+            </button>
+          )}
+          {userID && isOwn && (
+            <>
+              <button
+                onClick={editRecipe}
+                className="px-3 py-1 rounded-xl text-sm bg-indigo-400 text-gray-900 font-medium hover:bg-indigo-300 transition"
+              >
+                ✏️ Edit
+              </button>
+              <button
+                onClick={deleteRecipe}
+                className="px-3 py-1 rounded-xl text-sm bg-red-500 text-white font-medium hover:bg-red-400 transition"
+              >
+                🗑️ Delete
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
-export default Card;

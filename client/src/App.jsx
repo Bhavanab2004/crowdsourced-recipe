@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SavedRecipe from "./pages/SavedRecipe";
 import CreateRecipe from "./pages/CreateRecipe";
+import EditRecipe from "./pages/EditRecipe";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/register" element={<Register />} />
         <Route path="/saved-recipe" element={<SavedRecipe />} />
         <Route path="/create-recipe" element={<CreateRecipe />} />
+        <Route path="/edit-recipe/:id" element={<EditRecipe/>} />
       </Routes>
     </>
   );

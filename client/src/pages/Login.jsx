@@ -1,129 +1,107 @@
-import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
-
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
 export default function Login() {
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [cookies, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
+  const [notification, setNotification] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [notification, setNotification] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/auth/login",
+        { username, password }
+      );
+      if (response.data.message) {
+        setNotification({ type: "error", message: response.data.message });
+      } else {
+        setCookie("token", response.data.token, { path: "/" });
+        window.localStorage.setItem("userID", response.data.userID);
+        navigate("/");
+      }
+    } catch (err) {
+      setNotification({ type: "error", message: "Invalid credentials." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://emojigraph.org/media/facebook/fork-and-knife-with-plate_1f37d-fe0f.png"
-            alt="Recipe Book"
-          />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to "Recipe Book"
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            onSubmit={async (event) => {
-              event.preventDefault();
-              try {
-                const response = await axios.post(
-                  "https://crowdsourced-recipe.onrender.com/auth/login",
-                  {
-                    username: userName,
-                    password,
-                  }
-                );
-                if (response.data.message) {
-                  setNotification(response.data.message);
-                  return;
-                }
-                setCookie("token", response.data.token);
-                window.localStorage.setItem("userID", response.data.userID);
-                navigate("/");
-              } catch (error) {
-                console.error(error);
-                alert("Invalid credentials");
-              }
-            }}
-          >
+    <div className="min-h-screen flex items-center justify-center bg-[#1e1e2f] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md bg-black bg-opacity-50 backdrop-blur-md rounded-2xl p-8 shadow-lg">
+        <h2 className="mt-6 text-center text-3xl font-bold text-indigo-400">
+          Sign in to Recipe Book
+        </h2>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
+              <label htmlFor="username" className="sr-only">
                 Username
               </label>
-              <div className="mt-2">
-                <input
-                  onChange={(e) => setUserName(e.target.value)}
-                  value={userName}
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="appearance-none rounded-t-xl relative block w-full px-3 py-2 bg-[#2a2a3a] border border-gray-700 placeholder-gray-500 text-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Username"
+              />
             </div>
-
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none rounded-b-xl relative block w-full px-3 py-2 bg-[#2a2a3a] border border-gray-700 placeholder-gray-500 text-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+              />
             </div>
+          </div>
 
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button>
-            </div>
-          </form>
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition disabled:opacity-50"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </div>
           {notification && (
             <div
-              className={
-                "mt-4 text-center px-4 py-1 rounded bg-red-100 text-red-700"
-              }
+              className={`text-center px-4 py-2 rounded-xl ${
+                notification.type === "error"
+                  ? "bg-red-600 text-white"
+                  : "bg-green-600 text-white"
+              }`}
             >
-              {notification}
+              {notification.message}
             </div>
           )}
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Not a user?{" "}
-            <Link
-              to="/register"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
+
+          <div className="text-sm text-center text-gray-400">
+            Not a user?{' '}
+            <NavLink to="/register" className="text-indigo-400 hover:text-indigo-300">
               Register now
-            </Link>
-          </p>
-        </div>
+            </NavLink>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
