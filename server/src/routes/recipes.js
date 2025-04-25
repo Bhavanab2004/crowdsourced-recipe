@@ -86,7 +86,7 @@ router.put("/:id", async (req, res) => {
     res.status(200).json({ message: "✅ Recipe updated successfully!" });
 
   } catch (err) {
-    console.error("No Error :", err);
+    console.error("Error while updating :", err);
     res.status(500).json({ error: "An error occurred while updating the recipe" });
   }
 });
