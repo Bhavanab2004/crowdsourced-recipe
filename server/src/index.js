@@ -28,9 +28,9 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.send("Test branch");
+  res.send("Hello World");
 });
 
 app.listen(5000, () => {
-  console.log("Client is working");
+  console.log("Server has started");
 });
