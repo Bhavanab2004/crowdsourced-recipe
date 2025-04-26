@@ -39,6 +39,7 @@ export default function CreateRecipe() {
     e.preventDefault();
     setLoading(true);
     try {
+      await createRecipe({
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,
@@ -47,6 +48,7 @@ export default function CreateRecipe() {
         userOwner: userID,
         category: recipe.category,
       });
+    
       setNotification({ type: "success", message: "Recipe created successfully!" });
       setTimeout(() => {
         navigate("/");
@@ -57,7 +59,7 @@ export default function CreateRecipe() {
     } finally {
       setLoading(false);
     }
-  };
+    
 
   if (loading) {
     return (
