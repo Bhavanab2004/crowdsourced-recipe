@@ -13,13 +13,14 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { name, ingredients, instructions, imageUrl, cookingTime, userOwner } =
+  const { name, ingredients, instructions, imageUrl, cookingTime, userOwner, category } =
     req.body;
   const newRecipe = new Recipe({
     name,
     ingredients,
     instructions,
     imageUrl,
+    category,
     cookingTime,
     userOwner,
   });
@@ -67,7 +68,7 @@ router.get("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const recipeID = req.params.id;
-  const { name, ingredients, instructions, imageUrl, cookingTime, userOwner } = req.body;
+  const { name, ingredients, instructions, imageUrl, cookingTime, userOwner, category } = req.body;
 
   try {
     const recipe = await Recipe.findById(recipeID);
@@ -81,6 +82,7 @@ router.put("/:id", async (req, res) => {
     recipe.imageUrl = imageUrl;
     recipe.cookingTime = cookingTime;
     recipe.userOwner = userOwner;
+    recipe.category = category
 
     await recipe.save();
     res.status(200).json({ message: "✅ Recipe updated successfully!" });
