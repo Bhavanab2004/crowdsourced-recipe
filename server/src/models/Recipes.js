@@ -6,6 +6,7 @@ const recipeSchema = new mongoose.Schema({
   instructions: { type: String, required: true },
   imageUrl: { type: String, required: true },
   cookingTime: { type: Number, required: true },
+  category: { type: String, enum: ["Veg", "Non-Veg"], required: true, default: "Veg"},
   userOwner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
