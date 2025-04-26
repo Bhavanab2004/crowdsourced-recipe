@@ -55,7 +55,7 @@ export default function EditRecipe() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/recipes/${id}`, {
+      await axios.put(`https://crowdsourced-recipe.onrender.com/recipes/${id}`, {
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,

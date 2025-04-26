@@ -207,7 +207,9 @@ export default function CreateRecipe() {
           {notification && (
             <div
               className={`mt-4 text-center px-4 py-2 rounded-xl ${
-                notification.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                notification.type === "success"
+                  ? "bg-green-600 text-white"
+                  : "bg-red-600 text-white"
               }`}
             >
               {notification.message}

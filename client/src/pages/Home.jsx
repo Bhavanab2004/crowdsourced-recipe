@@ -9,6 +9,7 @@ export default function Home() {
   const [recipes, setRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,21 +44,44 @@ export default function Home() {
     fetchData();
   }, [userID]);
 
+  const filteredRecipes = recipes.filter((r) => {
+    if (selectedCategory === "All") return true;
+    return r.category === selectedCategory;
+  });
+
   return (
     <div className="min-h-screen bg-[#1e1e2f] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-indigo-400 text-center mb-8">
           All Recipes
         </h1>
+
+        {/* Category Filter Buttons */}
+        <div className="flex justify-center gap-4 mb-8">
+          {["All", "Veg", "Non-Veg"].map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-lg font-medium ${
+                selectedCategory === category
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         {loading ? (
           <div className="flex justify-center">
             <ReactLoading type="spin" color="#6366F1" />
           </div>
-        ) : recipes.length === 0 ? (
+        ) : filteredRecipes.length === 0 ? (
           <p className="text-gray-400 text-center">No recipes found</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recipes.map((r) => (
+            {filteredRecipes.map((r) => (
               <Card
                 key={r._id}
                 id={r._id}
