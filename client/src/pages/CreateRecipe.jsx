@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useGetUserID } from "../hooks/useGetUserID";
-import { useNavigate } from "react-router-dom";
 
 export default function CreateRecipe() {
   const [notification, setNotification] = useState(null);
@@ -35,11 +34,15 @@ export default function CreateRecipe() {
     setRecipe({ ...recipe, ingredients: [...recipe.ingredients, ""] });
   };
 
+  const createRecipe = async (recipeData) => {
+    await axios.post("http://your-api-endpoint.com/recipes", recipeData);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("https://crowdsourced-recipe.onrender.com/recipes", {
+      await createRecipe({
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,
@@ -48,7 +51,9 @@ export default function CreateRecipe() {
         userOwner: userID,
         category: recipe.category,
       });
+
       setNotification({ type: "success", message: "Recipe created successfully!" });
+
       setTimeout(() => {
         navigate("/");
       }, 1500);
