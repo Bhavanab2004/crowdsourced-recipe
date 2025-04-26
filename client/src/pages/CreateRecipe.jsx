@@ -39,6 +39,7 @@ export default function CreateRecipe() {
     e.preventDefault();
     setLoading(true);
     try {
+      await axios.post("https://crowdsourced-recipe.onrender.com/recipes", {
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,
@@ -201,7 +202,9 @@ export default function CreateRecipe() {
           {notification && (
             <div
               className={`mt-4 text-center px-4 py-2 rounded-xl ${
-                notification.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                notification.type === "success"
+                  ? "bg-green-600 text-white"
+                  : "bg-red-600 text-white"
               }`}
             >
               {notification.message}
