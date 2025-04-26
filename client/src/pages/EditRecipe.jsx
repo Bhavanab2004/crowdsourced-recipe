@@ -16,6 +16,7 @@ export default function EditRecipe() {
     instructions: "",
     imageUrl: "",
     cookingTime: 0,
+    category: "Veg",
   });
 
   useEffect(() => {
@@ -25,7 +26,6 @@ export default function EditRecipe() {
     }
     const fetchRecipe = async () => {
       try {
-        const { data } = await axios.get(`https://crowdsourced-recipe.onrender.com/recipes/${id}`);
         setRecipe({
           name: data.name || "",
           ingredients: data.ingredients.length ? data.ingredients : [""],
@@ -55,13 +55,14 @@ export default function EditRecipe() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://crowdsourced-recipe.onrender.com/recipes/${id}`, {
+      await axios.put(`http://localhost:5000/recipes/${id}`, {
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,
         imageUrl: recipe.imageUrl,
         cookingTime: recipe.cookingTime,
         userOwner: userID,
+        category: recipe.category,
       });
       setNotification({ type: "success", message: "Recipe updated successfully!" });
       setTimeout(() => {
@@ -178,6 +179,24 @@ export default function EditRecipe() {
               className="mt-1 block w-full rounded-xl bg-[#2a2a3a] border border-gray-700 py-2 px-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
+
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-200">
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={recipe.category}
+              onChange={(e) => setRecipe({ ...recipe, category: e.target.value })}
+              className="mt-1 block w-full rounded-xl bg-[#2a2a3a] border border-gray-700 py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="Veg">Veg</option>
+              <option value="Non-Veg">Non-Veg</option>
+            </select>
+          </div>
+
 
           {/* Actions */}
           <div className="flex items-center justify-end">

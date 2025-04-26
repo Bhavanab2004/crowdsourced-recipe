@@ -16,6 +16,7 @@ export default function CreateRecipe() {
     instructions: "",
     imageUrl: "",
     cookingTime: 0,
+    category: "Veg",
   });
 
   useEffect(() => {
@@ -38,13 +39,13 @@ export default function CreateRecipe() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("https://crowdsourced-recipe.onrender.com/recipes/create", {
         name: recipe.name,
         ingredients: recipe.ingredients.filter((ing) => ing.trim()),
         instructions: recipe.instructions,
         imageUrl: recipe.imageUrl,
         cookingTime: recipe.cookingTime,
         userOwner: userID,
+        category: recipe.category,
       });
       setNotification({ type: "success", message: "Recipe created successfully!" });
       setTimeout(() => {
@@ -164,6 +165,23 @@ export default function CreateRecipe() {
               onChange={(e) => setRecipe({ ...recipe, cookingTime: e.target.value })}
               className="mt-1 block w-full rounded-xl bg-[#2a2a3a] border border-gray-700 py-2 px-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-200">
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={recipe.category}
+              onChange={(e) => setRecipe({ ...recipe, category: e.target.value })}
+              className="mt-1 block w-full rounded-xl bg-[#2a2a3a] border border-gray-700 py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="Veg">Veg</option>
+              <option value="Non-Veg">Non-Veg</option>
+            </select>
           </div>
 
           {/* Actions */}
