@@ -35,7 +35,7 @@ export default function CreateRecipe() {
   };
 
   const createRecipe = async (recipeData) => {
-    await axios.post("http://your-api-endpoint.com/recipes", recipeData);
+    await axios.post("https://crowdsourced-recipe.onrender.com/.com/recipes", recipeData);
   };
 
   const handleSubmit = async (e) => {
